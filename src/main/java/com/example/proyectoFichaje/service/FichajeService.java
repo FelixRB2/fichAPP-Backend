@@ -1,9 +1,13 @@
 package com.example.proyectoFichaje.service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.springframework.stereotype.Service;
 
@@ -89,8 +93,44 @@ public class FichajeService {
             throw new RuntimeException("Este fichaje ya tiene hora de salida registrada.");
         }
 
-        fichaje.setHoraSalida(LocalTime.now());
+        LocalTime salida = LocalTime.now();
+        fichaje.setHoraSalida(salida);
         fichaje.setEstado(Fichajes.EstadoFichaje.normal);
+
+        // Calculate hours worked
+        Duration duration = Duration.between(fichaje.getHoraEntrada(), salida);
+        double hours = duration.toMinutes() / 60.0;
+        fichaje.setHorasTrabajadas(BigDecimal.valueOf(hours).setScale(2, RoundingMode.HALF_UP));
+
         return fichajeRepo.save(fichaje);
+    }
+
+    public Usuarios getDashboardData(UUID idUsuario) {
+        Usuarios usuario = usuarioRepo.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + idUsuario));
+
+        List<Fichajes> history = fichajeRepo.findByUsuario_IdUsuarioOrderByFechaDesc(idUsuario);
+        usuario.setRecentHistory(history);
+
+        // Active fichaje
+        usuario.setActiveFichaje(history.stream()
+                .filter(f -> f.getHoraSalida() == null)
+                .findFirst().orElse(null));
+
+        // Weekly Summary (7 days)
+        LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
+        long totalMinutes = history.stream()
+                .filter(f -> !f.getFecha().isBefore(oneWeekAgo) && f.getHoraSalida() != null)
+                .mapToLong(f -> Duration.between(f.getHoraEntrada(), f.getHoraSalida()).toMinutes())
+                .sum();
+
+        long h = totalMinutes / 60;
+        long m = totalMinutes % 60;
+        usuario.setWeeklyHours(String.format("%dh %02dm", h, m));
+
+        // Assuming 40h target
+        usuario.setWeeklyPercentage(Math.min(100.0, ((double)totalMinutes / (40.0 * 60.0)) * 100.0));
+
+        return usuario;
     }
 }

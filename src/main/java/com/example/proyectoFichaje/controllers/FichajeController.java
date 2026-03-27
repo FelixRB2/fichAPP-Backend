@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.proyectoFichaje.models.Fichajes;
+import com.example.proyectoFichaje.models.Usuarios;
 import com.example.proyectoFichaje.service.FichajeService;
 
 @RestController
 @RequestMapping("/api/fichajes")
+@CrossOrigin(origins = "*")
 public class FichajeController {
 
     private final FichajeService fichajeService;
@@ -57,6 +60,17 @@ public class FichajeController {
         try {
             List<Fichajes> fichajes = fichajeService.obtenerPorUsuario(idUsuario);
             return ResponseEntity.ok(fichajes);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // GET /api/fichajes/dashboard/{idUsuario}
+    @GetMapping("/dashboard/{idUsuario}")
+    public ResponseEntity<?> obtenerDashboard(@PathVariable UUID idUsuario) {
+        try {
+            Usuarios usuario = fichajeService.getDashboardData(idUsuario);
+            return ResponseEntity.ok(usuario);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

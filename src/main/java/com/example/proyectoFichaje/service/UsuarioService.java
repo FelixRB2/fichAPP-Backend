@@ -43,8 +43,8 @@ public class UsuarioService implements UserDetailsService {
             throw new RuntimeException("Ya existe un usuario con el correo: " + correo);
         }
 
-        Rol rolTrabajador = rolRepo.findByNombreRol(Rol.NombreRol.Trabajador)
-            .orElseThrow(() -> new RuntimeException("Rol Trabajador no encontrado. Ejecuta primero el SQL de roles."));
+        Rol rol = rolRepo.findByNombreRol(nombreRol)
+            .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + nombreRol + ". Ejecuta primero el SQL de roles."));
 
         Usuarios usuario = new Usuarios();
         usuario.setNombre(nombre);
@@ -54,7 +54,7 @@ public class UsuarioService implements UserDetailsService {
         usuario.setPuesto(puesto);
         usuario.setHorasSemanales(horasSemanales);
         usuario.setContrasena(passwordEncoder.encode(contrasena));
-        usuario.setRol(rolTrabajador);
+        usuario.setRol(rol);
         usuario.setEstado(Usuarios.EstadoUsuario.activo);
         return usuarioRepo.save(usuario);
     }

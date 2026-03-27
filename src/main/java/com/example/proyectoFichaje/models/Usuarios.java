@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import jakarta.persistence.Transient;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -69,6 +70,18 @@ public class Usuarios implements UserDetails {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Transient
+    private Fichajes activeFichaje;
+
+    @Transient
+    private List<Fichajes> recentHistory;
+
+    @Transient
+    private String weeklyHours;
+
+    @Transient
+    private double weeklyPercentage;
 
     public enum EstadoUsuario {
         activo, suspendido
@@ -138,4 +151,13 @@ public class Usuarios implements UserDetails {
     public void setEstado(EstadoUsuario estado) { this.estado = estado; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public Fichajes getActiveFichaje() { return activeFichaje; }
+    public void setActiveFichaje(Fichajes activeFichaje) { this.activeFichaje = activeFichaje; }
+    public List<Fichajes> getRecentHistory() { return recentHistory; }
+    public void setRecentHistory(List<Fichajes> recentHistory) { this.recentHistory = recentHistory; }
+    public String getWeeklyHours() { return weeklyHours; }
+    public void setWeeklyHours(String weeklyHours) { this.weeklyHours = weeklyHours; }
+    public double getWeeklyPercentage() { return weeklyPercentage; }
+    public void setWeeklyPercentage(double weeklyPercentage) { this.weeklyPercentage = weeklyPercentage; }
 }
