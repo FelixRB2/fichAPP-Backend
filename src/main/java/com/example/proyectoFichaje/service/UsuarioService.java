@@ -70,7 +70,33 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepo.findAll();
     }
 
-    
+    public Usuarios actualizarEstado(UUID id, Usuarios.EstadoUsuario nuevoEstado) {
+        Usuarios usuario = usuarioRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + id));
+        usuario.setEstado(nuevoEstado);
+        return usuarioRepo.save(usuario);
+    }
+
+    public Usuarios actualizar(UUID id, NombreRol nombreRol, String nombre, String apellido1, String apellido2,
+                               String correo, String puesto, BigDecimal horasSemanales, String contrasena, Usuarios.EstadoUsuario estado) {
+        Usuarios usuario = usuarioRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + id));
+
+        Rol rol = rolRepo.findByNombreRol(nombreRol)
+            .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + nombreRol));
+
+        usuario.setNombre(nombre);
+        usuario.setApellido1(apellido1);
+        usuario.setApellido2(apellido2);
+        usuario.setCorreo(correo);
+        usuario.setPuesto(puesto);
+        usuario.setHorasSemanales(horasSemanales);
+        usuario.setContrasena(contrasena);
+        usuario.setRol(rol);
+        usuario.setEstado(estado);
+        return usuarioRepo.save(usuario);
+    }
+
     public void eliminarUsuario(UUID id) {
         Usuarios usuario = usuarioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Trabajador no encontrado: " + id));

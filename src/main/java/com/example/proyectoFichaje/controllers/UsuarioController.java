@@ -76,6 +76,83 @@ public class UsuarioController {
         return ResponseEntity.ok().build();
     }
 
+    @org.springframework.web.bind.annotation.PutMapping("/{id}")
+    public ResponseEntity<?> actualizar(@PathVariable UUID id, @RequestBody ActualizarUsuarioRequest request) {
+        try {
+            com.example.proyectoFichaje.models.Usuarios.EstadoUsuario nuevoEstado = 
+                request.isActivo() ? com.example.proyectoFichaje.models.Usuarios.EstadoUsuario.activo : 
+                                    com.example.proyectoFichaje.models.Usuarios.EstadoUsuario.suspendido;
+
+            Usuarios usuario = usuarioService.actualizar(
+                id,
+                request.getNombreRol(),
+                request.getNombre(),
+                request.getApellido1(),
+                request.getApellido2(),
+                request.getCorreo(),
+                request.getPuesto(),
+                request.getHorasSemanales(),
+                request.getContrasena(),
+                nuevoEstado
+            );
+            return ResponseEntity.ok(usuario);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    public static class ActualizarUsuarioRequest {
+        private NombreRol nombreRol;
+        private String nombre;
+        private String apellido1;
+        private String apellido2;
+        private String correo;
+        private String puesto;
+        private java.math.BigDecimal horasSemanales;
+        private String contrasena;
+        private boolean activo;
+
+        public ActualizarUsuarioRequest() {}
+
+        public NombreRol getNombreRol() { return nombreRol; }
+        public void setNombreRol(NombreRol nombreRol) { this.nombreRol = nombreRol; }
+        public String getNombre() { return nombre; }
+        public void setNombre(String nombre) { this.nombre = nombre; }
+        public String getApellido1() { return apellido1; }
+        public void setApellido1(String apellido1) { this.apellido1 = apellido1; }
+        public String getApellido2() { return apellido2; }
+        public void setApellido2(String apellido2) { this.apellido2 = apellido2; }
+        public String getCorreo() { return correo; }
+        public void setCorreo(String correo) { this.correo = correo; }
+        public String getPuesto() { return puesto; }
+        public void setPuesto(String puesto) { this.puesto = puesto; }
+        public java.math.BigDecimal getHorasSemanales() { return horasSemanales; }
+        public void setHorasSemanales(java.math.BigDecimal horasSemanales) { this.horasSemanales = horasSemanales; }
+        public String getContrasena() {return contrasena; }
+        public void setContrasena(String contrasena) {this.contrasena = contrasena; }
+
+        public boolean isActivo() { return activo; }
+        public void setActivo(boolean activo) { this.activo = activo; }
+    }
+
+    @org.springframework.web.bind.annotation.PatchMapping("/{id}/estado")
+    public ResponseEntity<?> actualizarEstado(@PathVariable UUID id, @RequestBody PatchEstadoRequest request) {
+        try {
+            com.example.proyectoFichaje.models.Usuarios.EstadoUsuario nuevoEstado = 
+                request.isActivo() ? com.example.proyectoFichaje.models.Usuarios.EstadoUsuario.activo : 
+                                    com.example.proyectoFichaje.models.Usuarios.EstadoUsuario.suspendido;
+            return ResponseEntity.ok(usuarioService.actualizarEstado(id, nuevoEstado));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    public static class PatchEstadoRequest {
+        private boolean activo;
+        public boolean isActivo() { return activo; }
+        public void setActivo(boolean activo) { this.activo = activo; }
+    }
+
     public static class CrearUsuarioRequest {
         @JsonProperty("nombreRol")
         private NombreRol nombreRol;

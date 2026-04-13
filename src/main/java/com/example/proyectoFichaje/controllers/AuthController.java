@@ -52,7 +52,7 @@ public class AuthController {
                     request.apellido2,
                     request.email,
                     request.puesto,
-                    request.password,
+                    request.contrasena,
                     request.horasSemanales
             );
             return ResponseEntity.ok(usuario);
@@ -73,6 +73,6 @@ public class AuthController {
         public String email;
         public String puesto;
         public java.math.BigDecimal horasSemanales;
-        public String password;
+        public String contrasena;
     }
 }
