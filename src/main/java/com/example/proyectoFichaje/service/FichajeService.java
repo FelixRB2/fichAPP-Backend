@@ -133,4 +133,55 @@ public class FichajeService {
 
         return usuario;
     }
+
+    // --- NUEVOS MÉTODOS PARA CORRECCIÓN DE FICHAJES (OPCIÓN A) ---
+
+    @org.springframework.transaction.annotation.Transactional
+    public Fichajes solicitarCorreccion(UUID idFichaje, LocalTime entrada, LocalTime salida, String comentario) {
+        Fichajes fichaje = fichajeRepo.findById(idFichaje)
+                .orElseThrow(() -> new RuntimeException("Fichaje no encontrado"));
+
+        if (comentario == null || comentario.isBlank()) {
+            throw new RuntimeException("El comentario es obligatorio para solicitar una corrección.");
+        }
+
+        fichaje.setHoraEntradaPropuesta(entrada);
+        fichaje.setHoraSalidaPropuesta(salida);
+        fichaje.setComentario(comentario);
+        fichaje.setEstado(Fichajes.EstadoFichaje.pendiente_revision);
+
+        return fichajeRepo.save(fichaje);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public Fichajes resolverCorreccion(UUID idFichaje, boolean aprobado) {
+        Fichajes fichaje = fichajeRepo.findById(idFichaje)
+                .orElseThrow(() -> new RuntimeException("Fichaje no encontrado"));
+
+        if (aprobado) {
+            fichaje.setHoraEntrada(fichaje.getHoraEntradaPropuesta());
+            fichaje.setHoraSalida(fichaje.getHoraSalidaPropuesta());
+            fichaje.setEstado(Fichajes.EstadoFichaje.editado);
+            
+            // Recalcular horas trabajadas
+            if (fichaje.getHoraEntrada() != null && fichaje.getHoraSalida() != null) {
+                Duration duration = Duration.between(fichaje.getHoraEntrada(), fichaje.getHoraSalida());
+                double hours = duration.toMinutes() / 60.0;
+                fichaje.setHorasTrabajadas(BigDecimal.valueOf(hours).setScale(2, RoundingMode.HALF_UP));
+            }
+        } else {
+            // Si se rechaza, vuelve a estado normal (o el que tuviera) y se limpian las propuestas
+            fichaje.setEstado(Fichajes.EstadoFichaje.normal);
+        }
+
+        // Limpiar campos de propuesta tras resolver
+        fichaje.setHoraEntradaPropuesta(null);
+        fichaje.setHoraSalidaPropuesta(null);
+
+        return fichajeRepo.save(fichaje);
+    }
+
+    public List<Fichajes> obtenerPendientesRevision() {
+        return fichajeRepo.findByEstado(Fichajes.EstadoFichaje.pendiente_revision);
+    }
 }

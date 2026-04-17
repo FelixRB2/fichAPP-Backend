@@ -33,7 +33,7 @@ public class Fichajes {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
-    @JsonIgnore
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"recentHistory", "activeFichaje", "password", "authorities", "contrasena"})
     private Usuarios usuario;
 
     @Column(name = "fecha", nullable = false)
@@ -58,6 +58,12 @@ public class Fichajes {
     // Opcional al fichar, obligatorio al editar (validado en el servicio)
     @Column(name = "comentario", columnDefinition = "TEXT")
     private String comentario;
+
+    @Column(name = "hora_entrada_propuesta")
+    private LocalTime horaEntradaPropuesta;
+
+    @Column(name = "hora_salida_propuesta")
+    private LocalTime horaSalidaPropuesta;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -96,6 +102,10 @@ public class Fichajes {
     public void setEstado(EstadoFichaje estado) { this.estado = estado; }
     public String getComentario() { return comentario; }
     public void setComentario(String comentario) { this.comentario = comentario; }
+    public LocalTime getHoraEntradaPropuesta() { return horaEntradaPropuesta; }
+    public void setHoraEntradaPropuesta(LocalTime horaEntradaPropuesta) { this.horaEntradaPropuesta = horaEntradaPropuesta; }
+    public LocalTime getHoraSalidaPropuesta() { return horaSalidaPropuesta; }
+    public void setHoraSalidaPropuesta(LocalTime horaSalidaPropuesta) { this.horaSalidaPropuesta = horaSalidaPropuesta; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

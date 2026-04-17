@@ -109,6 +109,43 @@ public class FichajeController {
         public String comentario;
     }
 
+    @PostMapping("/{id}/solicitar-correccion")
+    public ResponseEntity<?> solicitarCorreccion(@PathVariable UUID id, @RequestBody ActualizarRequest request) {
+        try {
+            Fichajes fichaje = fichajeService.solicitarCorreccion(
+                id,
+                request.horaEntrada,
+                request.horaSalida,
+                request.comentario
+            );
+            return ResponseEntity.ok(fichaje);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/resolver-correccion")
+    public ResponseEntity<?> resolverCorreccion(
+            @PathVariable UUID id,
+            @org.springframework.web.bind.annotation.RequestParam boolean aprobado) {
+        try {
+            Fichajes fichaje = fichajeService.resolverCorreccion(id, aprobado);
+            return ResponseEntity.ok(fichaje);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/pendientes-revision")
+    public ResponseEntity<?> obtenerPendientesRevision() {
+        try {
+            List<Fichajes> pendientes = fichajeService.obtenerPendientesRevision();
+            return ResponseEntity.ok(pendientes);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     static class EntradaRequest {
         public UUID idUsuario;
         public String comentario;

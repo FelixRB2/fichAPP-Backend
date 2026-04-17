@@ -2,6 +2,7 @@ package com.example.proyectoFichaje.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -66,6 +67,12 @@ public class Solicitudes {
     @Column(name = "fecha_revision")
     private LocalDateTime fechaRevision;
 
+    @Column(name = "hora_entrada_propuesta")
+    private LocalTime horaEntradaPropuesta;
+
+    @Column(name = "hora_salida_propuesta")
+    private LocalTime horaSalidaPropuesta;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -113,6 +120,10 @@ public class Solicitudes {
     public void setComentario(String comentario) { this.comentario = comentario; }
     public Fichajes getFichajeRef() { return fichajeRef; }
     public void setFichajeRef(Fichajes fichajeRef) { this.fichajeRef = fichajeRef; }
+    public LocalTime getHoraEntradaPropuesta() { return horaEntradaPropuesta; }
+    public void setHoraEntradaPropuesta(LocalTime horaEntradaPropuesta) { this.horaEntradaPropuesta = horaEntradaPropuesta; }
+    public LocalTime getHoraSalidaPropuesta() { return horaSalidaPropuesta; }
+    public void setHoraSalidaPropuesta(LocalTime horaSalidaPropuesta) { this.horaSalidaPropuesta = horaSalidaPropuesta; }
     public LocalDateTime getFechaRevision() { return fechaRevision; }
     public void setFechaRevision(LocalDateTime fechaRevision) { this.fechaRevision = fechaRevision; }
     public LocalDateTime getCreatedAt() { return createdAt; }
