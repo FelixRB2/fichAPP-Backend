@@ -17,9 +17,9 @@ public interface horariosRepository extends JpaRepository<Horarios, UUID> {
 
     List<Horarios> findByUsuario_IdUsuario(UUID idUsuario);
 
-    // Horario vigente: fecha_fin null (indefinido) o aún no ha expirado
-    @Query("SELECT h FROM Horarios h WHERE h.usuario.idUsuario = :idUsuario AND (h.fechaFin IS NULL OR h.fechaFin >= :hoy)")
-    Optional<Horarios> findHorarioVigente(@Param("idUsuario") UUID idUsuario, @Param("hoy") LocalDate hoy);
+    // Horarios vigentes: han empezado y no han terminado (o no tienen fin)
+    @Query("SELECT h FROM Horarios h WHERE h.usuario.idUsuario = :idUsuario AND h.fechaInicio <= :hoy AND (h.fechaFin IS NULL OR h.fechaFin >= :hoy)")
+    List<Horarios> findHorariosVigentes(@Param("idUsuario") UUID idUsuario, @Param("hoy") LocalDate hoy);
 
     // Horarios que incluyan un día concreto (búsqueda en el SET de MySQL)
     @Query(value = "SELECT * FROM horarios WHERE id_usuario = :idUsuario AND FIND_IN_SET(:dia, dias_laborables) > 0", nativeQuery = true)

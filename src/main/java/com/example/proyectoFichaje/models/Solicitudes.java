@@ -31,15 +31,17 @@ public class Solicitudes {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"recentHistory", "activeFichaje", "password", "authorities", "contrasena"})
     private Usuarios usuario;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_revisor")
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"recentHistory", "activeFichaje", "password", "authorities", "contrasena"})
     private Usuarios revisor;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo", nullable = false)
-    private Tipo tipo;
+    @Column(name = "motivo", nullable = false)
+    private Motivo motivo;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
@@ -51,12 +53,6 @@ public class Solicitudes {
     @Column(name = "fecha_fin", nullable = false)
     private LocalDate fechaFin;
 
-    // Obligatorio si tipo = correccion_fichaje (validado en el servicio)
-    @Enumerated(EnumType.STRING)
-    @Column(name = "motivo")
-    private Motivo motivo;
-
-    // Obligatorio si tipo = correccion_fichaje (validado en el servicio)
     @Column(name = "comentario", columnDefinition = "TEXT")
     private String comentario;
 
@@ -77,19 +73,19 @@ public class Solicitudes {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "archivo_nombre")
+    private String archivoNombre;
 
-    public enum Tipo {
-        vacaciones, permiso_horas, baja_medica, correccion_fichaje
-    }
+    @Column(name = "archivo_url")
+    private String archivoUrl;
 
     public enum Estado {
         pendiente, aprobada, rechazada
     }
 
     public enum Motivo {
+        vacaciones, permiso_horas, baja_medica, correccion_fichaje, 
+        maternidad, paternidad, defuncion, asuntos_propios,
         error_entrada, error_salida, olvido_fichaje, problema_tecnico, otro
     }
 
@@ -106,16 +102,14 @@ public class Solicitudes {
     public void setUsuario(Usuarios usuario) { this.usuario = usuario; }
     public Usuarios getRevisor() { return revisor; }
     public void setRevisor(Usuarios revisor) { this.revisor = revisor; }
-    public Tipo getTipo() { return tipo; }
-    public void setTipo(Tipo tipo) { this.tipo = tipo; }
+    public Motivo getMotivo() { return motivo; }
+    public void setMotivo(Motivo motivo) { this.motivo = motivo; }
     public Estado getEstado() { return estado; }
     public void setEstado(Estado estado) { this.estado = estado; }
     public LocalDate getFechaInicio() { return fechaInicio; }
     public void setFechaInicio(LocalDate fechaInicio) { this.fechaInicio = fechaInicio; }
     public LocalDate getFechaFin() { return fechaFin; }
     public void setFechaFin(LocalDate fechaFin) { this.fechaFin = fechaFin; }
-    public Motivo getMotivo() { return motivo; }
-    public void setMotivo(Motivo motivo) { this.motivo = motivo; }
     public String getComentario() { return comentario; }
     public void setComentario(String comentario) { this.comentario = comentario; }
     public Fichajes getFichajeRef() { return fichajeRef; }
@@ -127,5 +121,8 @@ public class Solicitudes {
     public LocalDateTime getFechaRevision() { return fechaRevision; }
     public void setFechaRevision(LocalDateTime fechaRevision) { this.fechaRevision = fechaRevision; }
     public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public String getArchivoNombre() { return archivoNombre; }
+    public void setArchivoNombre(String archivoNombre) { this.archivoNombre = archivoNombre; }
+    public String getArchivoUrl() { return archivoUrl; }
+    public void setArchivoUrl(String archivoUrl) { this.archivoUrl = archivoUrl; }
 }

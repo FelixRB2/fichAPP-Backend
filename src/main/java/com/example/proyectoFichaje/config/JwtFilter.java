@@ -39,14 +39,24 @@ public class JwtFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
+                System.out.println(">>> JWT username extraído: " + username); // ← añade esto
             } catch (Exception e) {
-                // Token inválido o expirado
+                System.out.println(">>> Error extrayendo JWT: " + e.getMessage()); // ← y esto
             }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = this.usuarioService.loadUserByUsername(username);
+
+            System.out.println(">>> Username del token: " + username);
+            System.out.println(">>> Username del userDetails: " + userDetails.getUsername());
+            System.out.println(">>> Token expirado: " + jwtUtil.isTokenExpired(jwt)); // haz este método public
+            System.out.println(">>> Authorities: " + userDetails.getAuthorities());
+            System.out.println(">>> isEnabled: " + userDetails.isEnabled());
+            System.out.println(">>> isAccountNonLocked: " + userDetails.isAccountNonLocked());
+            System.out.println(">>> validateToken: " + jwtUtil.validateToken(jwt, userDetails));
+
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
 

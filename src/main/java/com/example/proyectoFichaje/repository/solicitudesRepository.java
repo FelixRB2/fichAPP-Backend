@@ -14,6 +14,5 @@ public interface solicitudesRepository extends JpaRepository<Solicitudes, UUID> 
     List<Solicitudes> findByUsuario_IdUsuarioOrderByCreatedAtDesc(UUID idUsuario);
     List<Solicitudes> findByEstadoOrderByCreatedAtDesc(Solicitudes.Estado estado);
     List<Solicitudes> findByUsuario_IdUsuarioAndEstado(UUID idUsuario, Solicitudes.Estado estado);
-    List<Solicitudes> findByTipo(Solicitudes.Tipo tipo);
     List<Solicitudes> findByMotivo(Solicitudes.Motivo motivo);
 }

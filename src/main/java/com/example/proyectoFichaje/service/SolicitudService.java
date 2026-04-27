@@ -18,17 +18,31 @@ import com.example.proyectoFichaje.repository.fichajeRepository;
 import com.example.proyectoFichaje.repository.solicitudesRepository;
 import com.example.proyectoFichaje.repository.usuariosRepository;
 
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+
 @Service
 public class SolicitudService {
 
     private final solicitudesRepository solicitudRepo;
     private final fichajeRepository fichajeRepo;
     private final usuariosRepository usuarioRepo;
+    private final String uploadDir = "uploads/justificantes";
 
     public SolicitudService(solicitudesRepository solicitudRepo, fichajeRepository fichajeRepo, usuariosRepository usuarioRepo) {
         this.solicitudRepo = solicitudRepo;
         this.fichajeRepo = fichajeRepo;
         this.usuarioRepo = usuarioRepo;
+        
+        // Crear directorio de subidas si no existe
+        try {
+            Files.createDirectories(Paths.get(uploadDir));
+        } catch (Exception e) {
+            System.err.println("No se pudo crear el directorio de subidas: " + e.getMessage());
+        }
     }
 
     public List<Solicitudes> obtenerTodas() {
@@ -57,14 +71,45 @@ public class SolicitudService {
         Solicitudes solicitud = new Solicitudes();
         solicitud.setUsuario(usuario);
         solicitud.setFichajeRef(fichaje);
-        solicitud.setTipo(Solicitudes.Tipo.correccion_fichaje);
         solicitud.setEstado(Solicitudes.Estado.pendiente);
         solicitud.setFechaInicio(fichaje.getFecha());
         solicitud.setFechaFin(fichaje.getFecha());
         solicitud.setHoraEntradaPropuesta(nuevaEntrada);
         solicitud.setHoraSalidaPropuesta(nuevaSalida);
         solicitud.setComentario(comentario);
-        solicitud.setMotivo(Solicitudes.Motivo.error_entrada); // Default
+        solicitud.setMotivo(Solicitudes.Motivo.correccion_fichaje);
+
+        return solicitudRepo.save(solicitud);
+    }
+
+    @Transactional
+    public Solicitudes crearSolicitudAusencia(UUID idUsuario, String motivo, String fechaInicio, String fechaFin, String comentario, MultipartFile archivo) {
+        Usuarios usuario = usuarioRepo.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Solicitudes solicitud = new Solicitudes();
+        solicitud.setUsuario(usuario);
+        solicitud.setMotivo(Solicitudes.Motivo.valueOf(motivo));
+        solicitud.setEstado(Solicitudes.Estado.pendiente);
+        solicitud.setFechaInicio(LocalDate.parse(fechaInicio));
+        solicitud.setFechaFin(LocalDate.parse(fechaFin));
+        solicitud.setComentario(comentario);
+
+        if (archivo != null && !archivo.isEmpty()) {
+            try {
+                String originalName = archivo.getOriginalFilename();
+                String extension = originalName.substring(originalName.lastIndexOf("."));
+                String nuevoNombre = UUID.randomUUID().toString() + extension;
+                Path path = Paths.get(uploadDir, nuevoNombre);
+                Files.copy(archivo.getInputStream(), path);
+                
+                solicitud.setArchivoNombre(originalName);
+                // La URL será para un endpoint que servirá el archivo
+                solicitud.setArchivoUrl("http://localhost:8085/api/solicitudes/archivo/" + nuevoNombre);
+            } catch (Exception e) {
+                throw new RuntimeException("Error al guardar el archivo: " + e.getMessage());
+            }
+        }
 
         return solicitudRepo.save(solicitud);
     }
@@ -80,7 +125,7 @@ public class SolicitudService {
         solicitud.setRevisor(revisor);
         solicitud.setFechaRevision(LocalDateTime.now());
 
-        if (aprobado && solicitud.getTipo() == Solicitudes.Tipo.correccion_fichaje && solicitud.getFichajeRef() != null) {
+        if (aprobado && solicitud.getMotivo() == Solicitudes.Motivo.correccion_fichaje && solicitud.getFichajeRef() != null) {
             Fichajes fichaje = solicitud.getFichajeRef();
             fichaje.setHoraEntrada(solicitud.getHoraEntradaPropuesta());
             fichaje.setHoraSalida(solicitud.getHoraSalidaPropuesta());
