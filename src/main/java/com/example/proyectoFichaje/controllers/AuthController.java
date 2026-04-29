@@ -45,8 +45,19 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
+            System.out.println("Intentando registrar usuario: " + request.email);
+            
+            Rol.NombreRol rolToSet = Rol.NombreRol.Trabajador;
+            if (request.nombreRol != null) {
+                try {
+                    rolToSet = Rol.NombreRol.valueOf(request.nombreRol);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Rol no válido recibido: " + request.nombreRol);
+                }
+            }
+
             Usuarios usuario = usuarioService.crear(
-                    Rol.NombreRol.Trabajador,
+                    rolToSet,
                     request.nombre,
                     request.apellido1,
                     request.apellido2,
@@ -57,6 +68,8 @@ public class AuthController {
             );
             return ResponseEntity.ok(usuario);
         } catch (Exception e) {
+            System.err.println("Error en el registro: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -67,12 +80,21 @@ public class AuthController {
     }
 
     static class RegisterRequest {
+        @com.fasterxml.jackson.annotation.JsonProperty("nombreRol")
+        public String nombreRol;
+        @com.fasterxml.jackson.annotation.JsonProperty("nombre")
         public String nombre;
+        @com.fasterxml.jackson.annotation.JsonProperty("apellido1")
         public String apellido1;
+        @com.fasterxml.jackson.annotation.JsonProperty("apellido2")
         public String apellido2;
+        @com.fasterxml.jackson.annotation.JsonProperty("email")
         public String email;
+        @com.fasterxml.jackson.annotation.JsonProperty("puesto")
         public String puesto;
+        @com.fasterxml.jackson.annotation.JsonProperty("horasSemanales")
         public java.math.BigDecimal horasSemanales;
+        @com.fasterxml.jackson.annotation.JsonProperty("contrasena")
         public String contrasena;
     }
 }

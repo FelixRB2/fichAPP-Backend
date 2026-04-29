@@ -22,11 +22,13 @@ public class UsuarioService implements UserDetailsService {
     private final usuariosRepository usuarioRepo;
     private final rolRepository rolRepo;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    public UsuarioService(usuariosRepository usuarioRepo, rolRepository rolRepo, PasswordEncoder passwordEncoder) {
+    public UsuarioService(usuariosRepository usuarioRepo, rolRepository rolRepo, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.usuarioRepo = usuarioRepo;
         this.rolRepo = rolRepo;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @Override
@@ -56,7 +58,13 @@ public class UsuarioService implements UserDetailsService {
         usuario.setContrasena(passwordEncoder.encode(contrasena));
         usuario.setRol(rol);
         usuario.setEstado(Usuarios.EstadoUsuario.activo);
-        return usuarioRepo.save(usuario);
+        
+        Usuarios nuevoUsuario = usuarioRepo.save(usuario);
+
+        // Enviar correo de bienvenida (Asíncrono)
+        emailService.enviarCorreoBienvenida(correo, nombre, apellido1);
+
+        return nuevoUsuario;
     }
 
     // READ: obtener usuario por id
