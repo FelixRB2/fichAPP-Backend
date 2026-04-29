@@ -2,6 +2,7 @@ package com.example.proyectoFichaje.controllers;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ import com.example.proyectoFichaje.service.FichajeService;
 @RestController
 @RequestMapping("/api/fichajes")
 @CrossOrigin(origins = "*")
-public class FichajeController {
+public class FichajeController { // Soporte para ubicación
 
     private final FichajeService fichajeService;
 
@@ -36,7 +37,7 @@ public class FichajeController {
     @PostMapping
     public ResponseEntity<?> registrarEntrada(@RequestBody EntradaRequest request) {
         try {
-            Fichajes fichaje = fichajeService.registrarEntrada(request.idUsuario, request.comentario);
+            Fichajes fichaje = fichajeService.registrarEntrada(request.idUsuario, request.comentario, request.latitud, request.longitud);
             return ResponseEntity.status(HttpStatus.CREATED).body(fichaje);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -45,9 +46,9 @@ public class FichajeController {
 
     // PUT /api/fichajes/{id}/salida
     @PutMapping("/{id}/salida")
-    public ResponseEntity<?> registrarSalida(@PathVariable UUID id) {
+    public ResponseEntity<?> registrarSalida(@PathVariable UUID id, @RequestBody SalidaRequest request) {
         try {
-            Fichajes fichaje = fichajeService.registrarSalida(id);
+            Fichajes fichaje = fichajeService.registrarSalida(id, request.latitud, request.longitud);
             return ResponseEntity.ok(fichaje);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -136,6 +137,12 @@ public class FichajeController {
         }
     }
 
+    /*@GetMapping("/ubicacion")
+   public ResponseEntity<?> verUbicacion(UUID idUsuario) {
+
+
+    }*/
+
     @GetMapping("/pendientes-revision")
     public ResponseEntity<?> obtenerPendientesRevision() {
         try {
@@ -149,6 +156,13 @@ public class FichajeController {
     static class EntradaRequest {
         public UUID idUsuario;
         public String comentario;
+        public BigDecimal latitud;
+        public BigDecimal longitud;
+    }
+
+    static class SalidaRequest {
+        public BigDecimal latitud;
+        public BigDecimal longitud;
     }
 
     static class ActualizarRequest {

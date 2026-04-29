@@ -16,8 +16,9 @@ import com.example.proyectoFichaje.models.Usuarios;
 import com.example.proyectoFichaje.repository.fichajeRepository;
 import com.example.proyectoFichaje.repository.usuariosRepository;
 
+// Actualizado para incluir ubicación
 @Service
-public class FichajeService {
+public class FichajeService { 
 
     private final fichajeRepository fichajeRepo;
     private final usuariosRepository usuarioRepo;
@@ -67,7 +68,7 @@ public class FichajeService {
         return fichajeRepo.findByUsuario_IdUsuarioOrderByFechaDesc(idUsuario);
     }
 
-    public Fichajes registrarEntrada(UUID idUsuario, String comentario) {
+    public Fichajes registrarEntrada(UUID idUsuario, String comentario, BigDecimal latitud, BigDecimal longitud) {
         Usuarios usuario = usuarioRepo.findById(idUsuario)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + idUsuario));
 
@@ -81,11 +82,12 @@ public class FichajeService {
         fichaje.setHoraSalida(null);
         fichaje.setComentario(comentario);
         fichaje.setEstado(Fichajes.EstadoFichaje.normal);
+        fichaje.setLatitudEntrada(latitud);
+        fichaje.setLongitudEntrada(longitud);
         return fichajeRepo.save(fichaje);
     }
 
-    // PUT /{id}/salida: registrar salida automática
-    public Fichajes registrarSalida(UUID idFichaje) {
+    public Fichajes registrarSalida(UUID idFichaje, BigDecimal latitud, BigDecimal longitud) {
         Fichajes fichaje = fichajeRepo.findById(idFichaje)
             .orElseThrow(() -> new RuntimeException("Fichaje no encontrado: " + idFichaje));
 
@@ -96,6 +98,8 @@ public class FichajeService {
         LocalTime salida = LocalTime.now();
         fichaje.setHoraSalida(salida);
         fichaje.setEstado(Fichajes.EstadoFichaje.normal);
+        fichaje.setLatitudSalida(latitud);
+        fichaje.setLongitudSalida(longitud);
 
         // Calculate hours worked
         Duration duration = Duration.between(fichaje.getHoraEntrada(), salida);

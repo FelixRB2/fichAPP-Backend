@@ -65,6 +65,18 @@ public class Fichajes {
     @Column(name = "hora_salida_propuesta")
     private LocalTime horaSalidaPropuesta;
 
+    @Column(name = "latitud_entrada", precision = 10, scale = 8)
+    private BigDecimal latitudEntrada;
+
+    @Column(name = "longitud_entrada", precision = 10, scale = 8)
+    private BigDecimal longitudEntrada;
+
+    @Column(name = "latitud_salida", precision = 10, scale = 8)
+    private BigDecimal latitudSalida;
+
+    @Column(name = "longitud_salida", precision = 10, scale = 8)
+    private BigDecimal longitudSalida;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -106,6 +118,33 @@ public class Fichajes {
     public void setHoraEntradaPropuesta(LocalTime horaEntradaPropuesta) { this.horaEntradaPropuesta = horaEntradaPropuesta; }
     public LocalTime getHoraSalidaPropuesta() { return horaSalidaPropuesta; }
     public void setHoraSalidaPropuesta(LocalTime horaSalidaPropuesta) { this.horaSalidaPropuesta = horaSalidaPropuesta; }
+    public BigDecimal getLatitudEntrada() { return latitudEntrada; }
+    public void setLatitudEntrada(BigDecimal latitudEntrada) { this.latitudEntrada = latitudEntrada; }
+
+    public BigDecimal getLongitudEntrada() { return longitudEntrada; }
+    public void setLongitudEntrada(BigDecimal longitudEntrada) { this.longitudEntrada = longitudEntrada; }
+
+    public BigDecimal getLatitudSalida() { return latitudSalida; }
+    public void setLatitudSalida(BigDecimal latitudSalida) { this.latitudSalida = latitudSalida; }
+
+    public BigDecimal getLongitudSalida() { return longitudSalida; }
+    public void setLongitudSalida(BigDecimal longitudSalida) { this.longitudSalida = longitudSalida; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    // Métodos para generar URLs de Google Maps
+    public String getMapaEntradaUrl() {
+        if (latitudEntrada != null && longitudEntrada != null) {
+            return "https://www.google.com/maps?q=" + latitudEntrada + "," + longitudEntrada;
+        }
+        return null;
+    }
+
+    public String getMapaSalidaUrl() {
+        if (latitudSalida != null && longitudSalida != null) {
+            return "https://www.google.com/maps?q=" + latitudSalida + "," + longitudSalida;
+        }
+        return null;
+    }
 }
