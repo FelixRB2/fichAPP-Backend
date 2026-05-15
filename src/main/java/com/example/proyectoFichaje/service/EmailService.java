@@ -30,17 +30,33 @@ public class EmailService {
             helper.setSubject("Bienvenido/a a FicharApp - Tu cuenta está lista");
 
             String htmlContent = 
-                "<div style='font-family: sans-serif; background-color: #09090b; color: #ffffff; padding: 40px; border-radius: 16px; max-width: 600px; margin: auto;'>" +
-                "  <h1 style='color: #6366f1; margin-bottom: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px;'>FicharApp</h1>" +
-                "  <p style='font-size: 16px; line-height: 1.6; color: #a1a1aa;'>Hola <strong style='color: #ffffff;'>" + nombre + " " + apellido1 + "</strong>,</p>" +
-                "  <p style='font-size: 16px; line-height: 1.6; color: #a1a1aa;'>Tu cuenta ha sido creada correctamente. Ya puedes acceder al panel para gestionar tus fichajes y horarios.</p>" +
-                "  <div style='background-color: #18181b; padding: 24px; border-radius: 12px; border: 1px solid #27272a; margin: 32px 0;'>" +
-                "    <p style='margin: 0 0 12px 0; font-size: 12px; text-transform: uppercase; font-weight: 800; color: #6366f1; letter-spacing: 1px;'>Tus datos de acceso</p>" +
-                "    <p style='margin: 8px 0; font-size: 14px;'><strong style='color: #71717a;'>Nombre completo:</strong> <span style='color: #ffffff;'>" + nombre + " " + apellido1 + "</span></p>" +
-                "    <p style='margin: 8px 0; font-size: 14px;'><strong style='color: #71717a;'>Email Corporativo:</strong> <span style='color: #ffffff;'>" + toEmail + "</span></p>" +
+                "<div style='font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; background-color: #F5F7FB; padding: 60px 20px; text-align: center;'>" +
+                "  <div style='background-color: #ffffff; padding: 40px; border-radius: 40px; max-width: 600px; margin: auto; text-align: left; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);'>" +
+                "    <div style='margin-bottom: 32px;'>" +
+                "      <h1 style='color: #00B8D4; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -1.5px;'>Fich<span style='color: #1F2937;'>App</span></h1>" +
+                "      <p style='font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #9CA3AF; margin: 4px 0 0 0;'>Gestión de Jornada</p>" +
+                "    </div>" +
+                "    <h2 style='color: #1F2937; font-size: 24px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 16px;'>¡Hola, " + nombre + "!</h2>" +
+                "    <p style='font-size: 16px; line-height: 1.6; color: #4B5563; margin-bottom: 32px;'>Tu cuenta ha sido activada con éxito en la plataforma. Ya puedes empezar a gestionar tus fichajes y ausencias desde el panel central.</p>" +
+                "    <div style='background-color: #F9FAFB; padding: 24px; border-radius: 24px; border: 1px solid #F3F4F6; margin-bottom: 32px;'>" +
+                "      <p style='margin: 0 0 16px 0; font-size: 10px; text-transform: uppercase; font-weight: 900; color: #00B8D4; letter-spacing: 1.5px;'>Datos de tu cuenta</p>" +
+                "      <div style='margin-bottom: 8px;'>" +
+                "        <span style='font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase;'>Empleado</span><br>" +
+                "        <span style='font-size: 15px; font-weight: 800; color: #1F2937;'>" + nombre + " " + apellido1 + "</span>" +
+                "      </div>" +
+                "      <div>" +
+                "        <span style='font-size: 12px; font-weight: 700; color: #9CA3AF; text-transform: uppercase;'>Usuario</span><br>" +
+                "        <span style='font-size: 15px; font-weight: 800; color: #1F2937;'>" + toEmail + "</span>" +
+                "      </div>" +
+                "    </div>" +
+                "    <div style='text-align: center;'>" +
+                "        <p style='font-size: 12px; color: #6B7280; margin-bottom: 20px; font-weight: 600;'>Utiliza tus credenciales para acceder</p>" +
+                "        <a href='http://localhost:4200/login' style='display: inline-block; background-color: #00B8D4; color: #ffffff; padding: 16px 32px; border-radius: 16px; text-decoration: none; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 15px -3px rgba(0, 184, 212, 0.25);'>Acceder a mi Panel</a>" +
+                "    </div>" +
+                "    <hr style='border: 0; border-top: 1px solid #F3F4F6; margin: 40px 0;'>" +
+                "    <p style='font-size: 11px; color: #9CA3AF; text-align: center; font-weight: 600;'>Este es un mensaje automático. Por favor, no respondas a este correo.</p>" +
                 "  </div>" +
-                "  <hr style='border: 0; border-top: 1px solid #27272a; margin: 32px 0;'>" +
-                "  <p style='font-size: 12px; color: #52525b; text-align: center;'>Este es un mensaje automático enviado por el sistema de gestión de FicharApp.</p>" +
+                "  <p style='margin-top: 24px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #9CA3AF;'>&copy; 2026 FichApp • All Rights Reserved</p>" +
                 "</div>";
 
             helper.setText(htmlContent, true);
